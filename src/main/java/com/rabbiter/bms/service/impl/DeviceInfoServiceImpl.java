@@ -16,37 +16,37 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
-@Service
+@Service// 标注为服务层组件
 public class DeviceInfoServiceImpl implements DeviceInfoService {
 
     @Resource
-    private DeviceInfoMapper deviceInfoMapper;
+    private DeviceInfoMapper deviceInfoMapper;// 注入 DeviceInfoMapper
     @Resource
-    private DeviceTypeMapper deviceTypeMapper;
+    private DeviceTypeMapper deviceTypeMapper;// 注入 DeviceTypeMapper
 
-    @Override
+    @Override// 实现获取设备数量的方法
     public Integer getCount() {
         return deviceInfoMapper.selectCount(null);
     }
 
-    @Override
+    @Override// 实现查询所有设备信息的方法
     public List<DeviceInfo> queryDeviceInfos() {
         return deviceInfoMapper.selectList(null);
     }
 
-    @Override
+    @Override// 实现根据设备ID查询设备信息的方法
     public DeviceInfo queryDeviceInfoById(Integer deviceId) {
         return deviceInfoMapper.selectById(deviceId);
     }
 
-    @Override
+    @Override// 实现根据条件查询设备数量的方法
     public Integer getSearchCount(Map<String, Object> params) {
         QueryWrapper<DeviceInfo> queryWrapper = buildQueryWrapper(params);
         // 使用 MyBatis-Plus 的 selectCount 方法根据条件查询记录数量
         return deviceInfoMapper.selectCount(queryWrapper);
     }
 
-    @Override
+    @Override// 实现根据条件分页查询设备信息的方法
     public List<DeviceInfo> searchDeviceInfosByPage(Map<String, Object> params) {
         int page = Integer.parseInt((String) params.get("page"));
         int size = Integer.parseInt((String) params.get("limit"));
@@ -66,12 +66,12 @@ public class DeviceInfoServiceImpl implements DeviceInfoService {
         return deviceInfoPage.getRecords();
     }
 
-    @Override
+    @Override// 实现添加设备信息的方法
     public Integer addDeviceInfo(DeviceInfo deviceInfo) {
         return deviceInfoMapper.insert(deviceInfo);
     }
 
-    @Override
+    @Override// 实现删除设备信息的方法
     public Integer deleteDeviceInfo(DeviceInfo deviceInfo) {
         int count = 0;
         try {
@@ -83,7 +83,7 @@ public class DeviceInfoServiceImpl implements DeviceInfoService {
         return count;
     }
 
-    @Override
+    @Override// 实现批量删除设备信息的方法
     public Integer deleteDeviceInfos(List<DeviceInfo> deviceInfos) {
         int count = 0;
         for(DeviceInfo deviceInfo : deviceInfos) {
@@ -92,11 +92,11 @@ public class DeviceInfoServiceImpl implements DeviceInfoService {
         return count;
     }
 
-    @Override
+    @Override// 实现更新设备信息的方法
     public Integer updateDeviceInfo(DeviceInfo deviceInfo) {
         return deviceInfoMapper.updateById(deviceInfo);
     }
-
+    // 构建查询条件的方法
     private QueryWrapper<DeviceInfo> buildQueryWrapper(Map<String, Object> params) {
         QueryWrapper<DeviceInfo> queryWrapper = new QueryWrapper<>();
         // 示例查询条件，可根据实际情况修改
