@@ -2,12 +2,12 @@ package com.rabbiter.bms.controller;
 
 import com.rabbiter.bms.exception.NotEnoughException;
 import com.rabbiter.bms.exception.OperationFailureException;
-import com.rabbiter.bms.pojo.Borrow;
+import com.rabbiter.bms.model.Borrow;
 import com.rabbiter.bms.service.DeviceInfoService;
 import com.rabbiter.bms.service.BorrowService;
 import com.rabbiter.bms.utils.MyResult;
 import com.rabbiter.bms.utils.MyUtils;
-import com.rabbiter.bms.pojo.DeviceInfo;
+import com.rabbiter.bms.model.DeviceInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;

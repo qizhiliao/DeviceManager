@@ -3,7 +3,7 @@ package com.rabbiter.bms.controller;
 import com.rabbiter.bms.service.DeviceInfoService;
 import com.rabbiter.bms.utils.MyResult;
 import com.rabbiter.bms.utils.MyUtils;
-import com.rabbiter.bms.pojo.DeviceInfo;
+import com.rabbiter.bms.model.DeviceInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

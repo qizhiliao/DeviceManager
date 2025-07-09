@@ -1,6 +1,6 @@
 package com.rabbiter.bms.controller;
 
-import com.rabbiter.bms.pojo.User;
+import com.rabbiter.bms.model.User;
 import com.rabbiter.bms.service.UserService;
 import com.rabbiter.bms.utils.MyResult;
 import com.rabbiter.bms.utils.MyUtils;
