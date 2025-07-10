@@ -1,6 +1,6 @@
 package com.rabbiter.bms.service;
 
-import com.rabbiter.bms.model.DeviceType;
+import com.rabbiter.bms.pojo.DeviceType;
 
 import java.util.List;
 import java.util.Map;
