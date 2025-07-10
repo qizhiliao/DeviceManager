@@ -1,0 +1,349 @@
+@startuml
+
+class CorsConfig {
+    + addCorsMappings():void
+}
+
+class InterceptorConfig{
+    {static} + all:String[]
+    {static} + aboutLogin:String[]
+    {static} + aboutReader:String[]
+
+    + addInterceptors():void
+}
+
+class Borrow{
+    + borrowId:Integer
+    + userName:String
+    + userId:Integer
+    + deviceId:Integer
+    + deviceName:String
+    + borrowtime:Date
+    + borrowtimestr:String
+    + returntime:Date
+    + returntimestr:String
+}
+
+class DeviceInfo{
+    + deviceId:Integer
+    + deviceName:String
+    + deviceAuthor:String
+    + devicePrice:BigDecimal
+    + deviceTypeId:Integer
+    + deviceTypeName:String
+    + deviceDesc:String
+    + isBorrowed:Byte
+    + deviceImg:String
+}
+
+class DeviceType{
+    + deviceTypeId:Integer
+    + deviceTypeName:String
+    + deviceTypeDesc:String
+}
+
+class User{
+    + userId:Integer
+    + userName:String
+    + userPassword:String
+    + isAdmin:Byte
+}
+
+class Comment{
+    + commentId:Integer
+    + borrowId:Integer
+    + userName:String
+    + deviceName:String
+    + commentText:String
+    + commentImg:String
+}
+
+interface BorrowMapper{
+}
+
+interface DeviceInfoMapper{
+}
+
+interface DeviceTypeMapper{
+}
+
+interface UserMapper{
+}
+
+interface CommentMapper{
+
+}
+
+interface BorrowService{
+    + getCount():Integer
+        + getSearchCount(data:Map<String, Object> params):Integer
+        + searchBorrowsByPage(Map<String, Object> params):List<Borrow>
+        + addBorrow(Borrow borrow):Integer
+        + addBorrow2(Borrow borrow):Integer
+        + deleteBorrow(Borrow borrow):Integer
+        + deleteBorrows(List<Borrow> borrows):Integer
+        + updateBorrow(Borrow borrow):Integer
+        + updateBorrow2(Borrow borrow):Integer
+        + queryBorrowsById(Integer borrowid)：Borrow
+        + buildQueryWrapper(Map<String, Object> params): QueryWrapper<Borrow>
+}
+
+interface DeviceInfoService{
+    + getCount():Integer
+    + queryDeviceInfos(): List<DeviceInfo>
+    + queryDeviceInfoById(Integer deviceId):DeviceInfo
+    + getSearchCount(Map<String, Object> params):Integer
+    + searchDeviceInfosByPage(Map<String, Object> params):List<DeviceInfo>
+    + addDeviceInfo(DeviceInfo deviceInfo):Integer
+    + deleteDeviceInfo(DeviceInfo deviceInfo):Integer
+    + deleteDeviceInfos(List<DeviceInfo> deviceInfos):Integer
+    + updateDeviceInfo(DeviceInfo deviceInfo):Integer
+    + buildQueryWrapper(Map<String, Object> params):QueryWrapper<DeviceInfo>
+}
+
+interface DeviceTypeService{
+    + getCount():Integer
+    + getSearchCount(Map<String, Object> params):Integer
+    + searchDeviceTypesByPage(Map<String, Object> params):List<DeviceType>
+    + addDeviceType(DeviceType deviceType):Integer
+    + deleteDeviceType(DeviceType deviceType) :Integer
+    + deleteDeviceTypes(List<DeviceType> deviceTypes):Integer
+    + updateDeviceType(DeviceType deviceType):Integer
+    + queryDeviceTypes() :List<DeviceType>
+    + buildQueryWrapper(Map<String, Object> params):QueryWrapper<DeviceType>
+}
+
+interface UserService{
+    + login(User user) :User
+    + saveUser(String token, User user):void
+    + getUser(String token):User
+    + removeUser(String token):void
+    + register(String userName, String password):Integer
+    + setPassword(Integer id, String password):void
+    + getCount():Integer
+    + queryUsers():List<User>
+    + getSearchCount(Map<String, Object> params):int
+    + searchUsersByPage(Map<String, Object> params):List<User>
+    + addUser(User user):Integer
+    + deleteUser:Integer
+    + deleteUsers:Integer
+    + updateUser:Integer
+}
+
+interface CommentService{
+    + getCount():Integer
+    + selectAll():List<Comment>
+    + searchCommentsByPage(Map<String, Object> params):List<Comment>
+    + getSearchCount(Map<String, Object> params):Integer
+    + deleteComment(Comment comment):Integer
+    + deleteComments(List<Comment> comments):Integer
+    + addComment(Comment comment):Integer
+}
+
+class BorrowServiceImpl{
+    + borrowMapper:BorrowMapper
+    + userMapper:UserMapper
+    + deviceInfoMapper:DeviceInfoMapper
+
+    + getCount():Integer
+    + getSearchCount(data:Map<String, Object> params):Integer
+    + searchBorrowsByPage(Map<String, Object> params):List<Borrow>
+    + addBorrow(Borrow borrow):Integer
+    + addBorrow2(Borrow borrow):Integer
+    + deleteBorrow(Borrow borrow):Integer
+    + deleteBorrows(List<Borrow> borrows):Integer
+    + updateBorrow(Borrow borrow):Integer
+    + updateBorrow2(Borrow borrow):Integer
+    + queryBorrowsById(Integer borrowid)：Borrow
+    + buildQueryWrapper(Map<String, Object> params): QueryWrapper<Borrow>
+}
+BorrowService<|.. BorrowServiceImpl
+BorrowServiceImpl ..>BorrowMapper
+
+class DeviceInfoServiceImpl{
+    + deviceInfoMapper:DeviceInfoMapper
+    + deviceTypeMapper:DeviceTypeMapper
+
+    + getCount():Integer
+    + queryDeviceInfos(): List<DeviceInfo>
+    + queryDeviceInfoById(Integer deviceId):DeviceInfo
+    + getSearchCount(Map<String, Object> params):Integer
+    + searchDeviceInfosByPage(Map<String, Object> params):List<DeviceInfo>
+    + addDeviceInfo(DeviceInfo deviceInfo):Integer
+    + deleteDeviceInfo(DeviceInfo deviceInfo):Integer
+    + deleteDeviceInfos(List<DeviceInfo> deviceInfos):Integer
+    + updateDeviceInfo(DeviceInfo deviceInfo):Integer
+    + buildQueryWrapper(Map<String, Object> params):QueryWrapper<DeviceInfo>
+
+}
+DeviceInfoService<|.. DeviceInfoServiceImpl
+DeviceInfoServiceImpl ..>DeviceInfoMapper
+
+class DeviceTypeServiceImpl{
+    + deviceTypeMapper: DeviceTypeMapper
+
+    + getCount():Integer
+    + getSearchCount(Map<String, Object> params):Integer
+    + searchDeviceTypesByPage(Map<String, Object> params):List<DeviceType>
+    + addDeviceType(DeviceType deviceType):Integer
+    + deleteDeviceType(DeviceType deviceType) :Integer
+    + deleteDeviceTypes(List<DeviceType> deviceTypes):Integer
+    + updateDeviceType(DeviceType deviceType):Integer
+    + queryDeviceTypes() :List<DeviceType>
+    + buildQueryWrapper(Map<String, Object> params):QueryWrapper<DeviceType>
+}
+DeviceTypeService<|.. DeviceTypeServiceImpl
+DeviceTypeServiceImpl ..>DeviceTypeMapper
+
+class UserServiceImpl{
+    + userMapper:UserMapper
+    + redisTemplate:private RedisTemplate<Object, Object>
+
+    + login(User user) :User
+    + saveUser(String token, User user):void
+    + getUser(String token):User
+    + removeUser(String token):void
+    + register(String userName, String password):Integer
+    + setPassword(Integer id, String password):void
+    + getCount():Integer
+    + queryUsers():List<User>
+    + getSearchCount(Map<String, Object> params):int
+    + searchUsersByPage(Map<String, Object> params):List<User>
+    + addUser(User user):Integer
+    + deleteUser:Integer
+    + deleteUsers:Integer
+    + updateUser:Integer
+}
+UserService<|.. UserServiceImpl
+UserServiceImpl ..>UserMapper
+
+class CommentServiceImpl{
+    + getCount():Integer
+    + selectAll():List<Comment>
+    + searchCommentsByPage(Map<String, Object> params):List<Comment>
+    + getSearchCount(Map<String, Object> params):Integer
+    + deleteComment(Comment comment):Integer
+    + deleteComments(List<Comment> comments):Integer
+    + addComment(Comment comment):Integer
+}
+CommentService<|.. CommentServiceImpl
+CommentServiceImpl ..>CommentMapper
+
+class BorrowController{
+    + borrowService:BorrowService
+    + deviceInfoService:DeviceInfoService
+
+    + queryBorrowsByPage(@RequestParam Map<String, Object> params):Map<String, Object>
+    + addBorrow(@RequestBody Borrow borrow):Integer
+    + getCount():Integer
+    + deleteBorrow(@RequestBody Borrow borrow):Integer
+    + deleteBorrows(@RequestBody List<Borrow> borrows):Integer
+    + updateBorrow(@RequestBody Borrow borrow):Integer
+    + borrowDevice(Integer userId, Integer deviceId):Integer
+    + returnDevice(Integer borrowid, Integer deviceId):Integer
+}
+
+class DeviceInfoController{
+    + deviceInfoService:DeviceInfoService
+
+    + getCount():Integer
+    + queryDeviceInfos():List<DeviceInfo>
+    + queryDeviceInfosByPage(@RequestParam Map<String, Object> params):Map<String, Object>
+    + addDeviceInfo(@RequestBody DeviceInfo deviceInfo):Integer
+    + deleteDeviceInfo(@RequestBody DeviceInfo deviceInfo):Integer
+    + deletedDviceInfos(@RequestBody List<DeviceInfo> deviceInfos):Integer
+    + updateDeviceInfo(@RequestBody DeviceInfo deviceInfo):Integer
+}
+
+class DeviceTypeController{
+    + deviceTypeService:DeviceTypeService
+
+    + getCount()：Integer
+    + queryDeviceTypes():List<DeviceType>
+    + queryDeviceTypesByPage(@RequestParam Map<String, Object> params):Map<String, Object>
+    + addDeviceType(@RequestBody DeviceType deviceType):Integer
+    + deleteDeviceType((@RequestBody DeviceType deviceType):Integer
+    + deleteDeviceTypes(@RequestBody List<DeviceType> deviceTypes):Integer
+    + updateDeviceType(@RequestBody DeviceType deviceType):Integer
+}
+
+class UpdateController{
+    + myUpdate(HttpServletRequest req, String dirName):String
+    + updateImg(HttpServletRequest req):Map<String,Object>
+}
+
+class UserController{
+    + userService:UserService
+
+    + login(@RequestBody User user):Map<String,Object>
+    + info(String token):Map<String, Object>
+    + logout(String token):Map<String, Object>
+    + register(String userName, String password):Integer
+    + alterPassword(Integer userId, String userName, Byte isAdmin, String oldPassword, String newPassword):Integer
+    + getCount():Integer
+    + queryUsers():List<User>
+    + queryUsersByPage(@RequestParam Map<String, Object> params):Map<String, Object>
+    + addUser(@RequestBody User user):Integer
+    + deleteUser(@RequestBody User user)：Integer
+    + deleteUsers(@RequestBody List<User> users):Integer
+    + updateUser(@RequestBody User user):Integer
+}
+
+class CommentController{
+    + commentService:CommentService
+
+    + getCount():Integer
+    + selectAll():List<Comment>
+    + searchCommentsByPage(@RequestParam Map<String, Object> params):Map<String, Object>
+    + deleteComment(@RequestBody Comment comment):Integer
+    + deleteComments(@RequestBody List<Comment> comments):Integer
+    + addComment(@RequestBody Comment comment):Integer
+
+class UserInterceptor {
+    + preHandle(HttpServletRequest request, HttpServletResponse response, Object handler):boolean
+}
+UserInterceptor ..|> HandlerInterceptor
+
+class ReaderInterceptor{
+    + preHandle(HttpServletRequest request, HttpServletResponse response, Object handler):boolean
+}
+ReaderInterceptor ..|> HandlerInterceptor
+
+class NotEnoughException{
+    + NotEnoughException()
+    + NotEnoughException(String message)
+}
+NotEnoughException ..|>RuntimeException
+
+class OperationFailureException{
+    + OperationFailureException()
+    + OperationFailureException(String message)
+}
+OperationFailureException ..|>RuntimeException
+
+BorrowController ..> BorrowService : 依赖（调用业务逻辑）
+DeviceInfoController ..> DeviceInfoService : 依赖（调用业务逻辑）
+DeviceTypeController ..> DeviceTypeService : 依赖（调用业务逻辑）
+UserController ..> UserService : 依赖（调用业务逻辑）
+CommentController..> CommentService : 依赖（调用业务逻辑）
+
+BorrowServiceImpl ..> Borrow : 依赖（参数/返回值）
+DeviceInfoServiceImpl ..> DeviceInfo : 依赖（参数/返回值）
+DeviceTypeServiceImpl ..> DeviceType : 依赖（参数/返回值）
+UserServiceImpl ..> User : 依赖（参数/返回值）
+CommentServiceImpl..> Comment : 依赖（参数/返回值）
+
+UserInterceptor ..> UserService : 可能依赖（校验用户信息）
+UserInterceptor ..> User : 可能依赖（用户数据校验）
+ReaderInterceptor ..> UserService : 可能依赖（读者权限校验）
+
+
+InterceptorConfig ..> UserInterceptor : 依赖（注册拦截器）
+InterceptorConfig ..> ReaderInterceptor : 依赖（注册拦截器）
+
+BorrowServiceImpl ..> NotEnoughException : 可能抛出（如设备不足）
+BorrowServiceImpl ..> OperationFailureException : 可能抛出（如借用失败）
+DeviceInfoServiceImpl ..> OperationFailureException : 可能抛出（如更新失败）
+CommentServiceImpl..> OperationFailureException : 可能抛出（如评论失败）
+
+@enduml
