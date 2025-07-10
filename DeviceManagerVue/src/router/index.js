@@ -117,9 +117,9 @@ export const asyncRoutes = [
         name: 'Comment',
         component: () => import('@/views/comment/index'),
         meta: {
-          title: '租赁评价',
-          icon: 'return',
-          roles: ['admin', 'reader'],
+          title: '设备租赁评价管理',
+          icon: 'table',
+          roles: ['admin','reader'],
           noCache: true
         }
       }
