@@ -65,7 +65,8 @@
           :width="roleIsAdmin?'180px':'110px'">
         <template slot-scope="scope">
           <el-button v-permission="['admin']" @click="handleDelete(scope.row,scope.$index)" type="danger" size="small">删除</el-button>
-          <el-button @click="handleReturn(scope.row,scope.$index)" type="success" size="small">归还设备</el-button>
+          <el-button v-if="!scope.row.returntimestr" @click="handleReturn(scope.row,scope.$index)" type="success" size="small">归还设备</el-button>
+          <el-button v-else @click="handleComment(scope.row)" type="primary" size="small">去评价</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -82,6 +83,20 @@
         :total="recordTotal"
         style="margin-top: 15px">
     </el-pagination>
+
+    <!-- 评价弹窗 -->
+    <el-dialog title="设备评价" :visible.sync="dialogCommentVisible" width="40%">
+      <el-form :model="commentForm" :rules="commentRules" ref="commentForm">
+        <el-form-item label="评价内容" prop="commentText">
+          <el-input type="textarea" v-model="commentForm.commentText" rows="4" placeholder="请输入评价内容"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogCommentVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleSubmitComment">提交评价</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -90,6 +105,7 @@ import { mapGetters } from 'vuex'
 import permission from '@/directive/permission/index.js' // 权限判断指令
 import waves from '@/directive/waves' // waves directive
 import { getCount,queryBorrows,queryBorrowsByPage,addBorrow,deleteBorrow,deleteBorrows,updateBorrow,returnDevice } from '@/api/borrow'
+import { addComment } from '@/api/comment'
 
 export default {
   name: 'Deviceinfo',
@@ -209,11 +225,11 @@ export default {
       }).then(() => {
         returnDevice(row.borrowid, row.deviceId).then(res => {
           if(res === 1) {
-            this.$message.success('还设备成功')
-            this.handleCurrentChange(this.queryParam.page)
-          } else {
-            this.$message.error('还设备失败')
-          }
+          this.$message.success('归还设备成功')
+          this.handleCurrentChange(this.queryParam.page)
+        } else {
+          this.$message.error('归还设备失败')
+        }
         })
       })
     },
@@ -236,6 +252,33 @@ export default {
     //   })
     // },
 
+    // 去评价
+    handleComment(row) {
+      this.commentForm = {
+        borrowId: row.borrowid,
+        deviceId: row.deviceId,
+        commentText: ''
+      }
+      this.dialogCommentVisible = true
+    },
+
+    // 提交评价
+    handleSubmitComment() {
+      this.$refs.commentForm.validate(valid => {
+        if (valid) {
+          addComment({ commentId: null, borrowId: this.commentForm.borrowId, deviceId: this.commentForm.deviceId, commentText: this.commentForm.commentText }).then(res => {
+            if (res === 1) {
+              this.$message.success('评价提交成功')
+              this.dialogCommentVisible = false
+              this.handleCurrentChange(this.queryParam.page)
+            } else {
+              this.$message.error('评价提交失败')
+            }
+          })
+        }
+      })
+    },
+
   },
   data() {
     return {
@@ -250,6 +293,21 @@ export default {
         userId: null,
         userName: null,
         deviceName: null,
+      },
+      // 评价弹窗显示状态
+      dialogCommentVisible: false,
+      // 评价表单数据
+      commentForm: {
+        borrowId: null,
+        deviceId: null,
+        commentText: ''
+      },
+      // 评价表单验证规则
+      commentRules: {
+        commentText: [
+          { required: true, message: '请输入评价内容', trigger: 'blur' },
+          { min: 5, max: 500, message: '评价内容长度在 5 到 500 个字符', trigger: 'blur' }
+        ]
       }
     }
   },
