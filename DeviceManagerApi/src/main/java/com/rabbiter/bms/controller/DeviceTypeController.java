@@ -1,6 +1,6 @@
 package com.rabbiter.bms.controller;
 
-import com.rabbiter.bms.model.DeviceType;
+import com.rabbiter.bms.pojo.DeviceType;
 import com.rabbiter.bms.service.DeviceTypeService;
 import com.rabbiter.bms.utils.MyResult;
 import com.rabbiter.bms.utils.MyUtils;
