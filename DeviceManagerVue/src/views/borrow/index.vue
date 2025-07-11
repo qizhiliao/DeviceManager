@@ -66,7 +66,7 @@
         <template slot-scope="scope">
           <el-button v-permission="['admin']" @click="handleDelete(scope.row,scope.$index)" type="danger" size="small">删除</el-button>
           <el-button v-if="!scope.row.returntimestr" @click="handleReturn(scope.row,scope.$index)" type="success" size="small">归还设备</el-button>
-          <el-button v-else @click="handleComment(scope.row)" type="primary" size="small">去评价</el-button>
+          <el-button v-else :disabled="scope.row.commented" @click="handleComment(scope.row)" type="primary" size="small">{{ scope.row.commented ? '已评价' : '去评价' }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -105,7 +105,7 @@ import { mapGetters } from 'vuex'
 import permission from '@/directive/permission/index.js' // 权限判断指令
 import waves from '@/directive/waves' // waves directive
 import { getCount,queryBorrows,queryBorrowsByPage,addBorrow,deleteBorrow,deleteBorrows,updateBorrow,returnDevice } from '@/api/borrow'
-import { addComment } from '@/api/comment'
+import { addComment, selectAll } from '@/api/comment'
 
 export default {
   name: 'Deviceinfo',
@@ -117,9 +117,43 @@ export default {
       console.log('首页数据获取成功',res)
       this.tableData = res.data
       this.recordTotal = res.count
+
+      this.updateCommentStatus();
     })
   },
   methods: {
+    // 更新评价状态
+    updateCommentStatus() {
+      selectAll().then(commentsRes => {
+        console.log('所有评价记录:', commentsRes);
+        if (!commentsRes || !Array.isArray(commentsRes)) {
+          console.error('获取评价列表失败: 数据格式不正确')
+          return
+        }
+        
+        // 过滤出评论内容不为空的记录
+        console.log('原始评价记录数据:', commentsRes);
+        const validComments = commentsRes.filter(comment => comment && comment.commentText && comment.commentText.trim() !== '')
+        console.log('有效评价记录:', validComments);
+        // 处理可能的字段名变体并过滤空值
+        const commentedBorrowIds = validComments
+          .map(comment => {
+            const borrowId = comment.borrowid || comment.borrowId || comment.borrow_id || null
+            return borrowId !== null ? String(borrowId) : null
+          })
+          .filter(id => id !== null);
+        console.log('已评价的borrowid列表:', commentedBorrowIds);
+        this.tableData.forEach(borrow => {
+          if (!borrow) return;
+          const borrowIdStr = borrow.borrowid !== undefined ? String(borrow.borrowid) : '';
+          const isCommented = commentedBorrowIds.includes(borrowIdStr);
+          console.log(`借用记录 ${borrowIdStr}: 是否已评价=${isCommented}`);
+          this.$set(borrow, 'commented', isCommented);
+        })
+      }).catch(error => {
+        console.error('获取评价列表失败:', error)
+      })
+    },
     // 分页大小改变监听
     handleSizeChange(curSize) {
       const params = this.queryParam
@@ -128,6 +162,8 @@ export default {
             console.log('分页数据获取成功',res)
             this.tableData = res.data
             this.recordTotal = res.count
+            this.updateCommentStatus();
+            this.updateCommentStatus();
       })
     },
 
@@ -149,6 +185,8 @@ export default {
         if(res.code === 0) {
           this.tableData = res.data
           this.recordTotal = res.count
+          this.updateCommentStatus();
+          
         }
       })
     },
@@ -162,6 +200,7 @@ export default {
         if(res.code === 0) {
           this.tableData = res.data
           this.recordTotal = res.count
+          this.updateCommentStatus()
         }
       })
     },
@@ -268,12 +307,17 @@ export default {
         if (valid) {
           addComment({ commentId: null, borrowId: this.commentForm.borrowId, deviceId: this.commentForm.deviceId, commentText: this.commentForm.commentText }).then(res => {
             if (res === 1) {
-              this.$message.success('评价提交成功')
-              this.dialogCommentVisible = false
-              this.handleCurrentChange(this.queryParam.page)
-            } else {
-              this.$message.error('评价提交失败')
-            }
+          this.$message.success('评价提交成功')
+          this.dialogCommentVisible = false
+          // 更新当前行的评价状态
+          const rowIndex = this.tableData.findIndex(item => item.borrowid === this.commentForm.borrowId)
+          if (rowIndex !== -1) {
+            this.$set(this.tableData[rowIndex], 'commented', true)
+          }
+          this.updateCommentStatus();
+        } else {
+          this.$message.error('评价提交失败')
+        }
           })
         }
       })
